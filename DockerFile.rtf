@@ -1,0 +1,34 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf600
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;\red51\green33\blue255;
+\red159\green0\blue128;\red0\green0\blue0;\red213\green214\blue214;\red27\green119\blue21;\red0\green0\blue0;
+\red5\green5\blue6;\red212\green213\blue214;\red249\green73\blue8;\red0\green0\blue0;\red5\green5\blue6;
+\red212\green213\blue214;}
+{\*\expandedcolortbl;;\cssrgb\c0\c1\c1;\cssrgb\c100000\c100000\c99971;\cssrgb\c26473\c26712\c100000;
+\cssrgb\c69321\c6538\c57429;\cssrgb\c0\c0\c0;\cssrgb\c86624\c87018\c86978;\cssrgb\c10960\c52920\c10693;\cssrgb\c0\c1\c1;
+\cssrgb\c1573\c1573\c1963\c6667;\cssrgb\c86373\c86765\c87050;\cssrgb\c99165\c38061\c0;\cssrgb\c0\c1\c1;\cssrgb\c1573\c1573\c1963\c6667;
+\cssrgb\c86373\c86765\c87050;}
+\margl1440\margr1440\vieww20640\viewh13360\viewkind0
+\deftab720
+\pard\pardeftab720\sl320\partightenfactor0
+
+\f0\fs28 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec4 F\cf2 \cb3 \strokec5 # the first stage of our build will use a maven 3.6.1 parent image\cf2 \cb3 \strokec6 \
+\pard\pardeftab720\sl320\partightenfactor0
+\cf2 \cb3 \strokec4 FROM \cf2 \cb3 \strokec6 maven:\cf2 \cb3 \strokec5 3.6.1\cf2 \cb3 \strokec6 -jdk-\cf2 \cb3 \strokec5 8\cf2 \cb3 \strokec6 -\cf2 \cb3 \strokec4 alpine \cf2 \cb3 \strokec6 AS MAVEN_BUILD\
+\'a0\
+\cf2 \cb3 \strokec5 # copy the pom and src code to the container\cf2 \cb3 \strokec6 \
+COPY \cf2 \cb3 \strokec7 target/TermProject-1.0-SNAPSHOT-jar-with-dependencies.jar \cf2 \cb3 \strokec6 \
+\'a0\
+\cf2 \cb3 \strokec5 # package our application code\cf2 \cb3 \strokec6 \
+\cf2 \cb3 \strokec4 RUN mvn clean \cf2 \cb3 \strokec8 package\cf2 \cb3 \strokec6 \
+\'a0\
+\cf2 \cb3 \strokec5 # the second stage of our build will use open jdk 8 on alpine 3.9\cf2 \cb3 \strokec6 \
+\cf2 \cb3 \strokec4 FROM \cf2 \cb3 \strokec6 openjdk:\cf2 \cb3 \strokec5 8\cf2 \cb3 \strokec6 -jre-alpine3.\cf2 \cb3 \strokec5 9\cf2 \cb3 \strokec6 \
+\'a0\
+\cf2 \cb3 \strokec5 # copy only the artifacts we need from the first stage and discard the rest\cf2 \cb3 \strokec6 \
+COPY --from=MAVEN_BUILD \cf9 \cb10 \strokec11 target/TermProject-1.0-SNAPSHOT-jar-with-dependencies.jar \cf2 \cb3 \strokec6 \
+\
+\cf2 \cb3 \strokec5 # set the startup command to execute the jar\cf2 \cb3 \strokec6 \
+CMD [\cf2 \cb3 \strokec12 "java"\cf2 \cb3 \strokec6 , \cf2 \cb3 \strokec12 "-jar"\cf2 \cb3 \strokec6 , \cf2 \cb3 \strokec12 "\cf13 \cb14 \outl0\strokewidth0 TermProject-1.0-SNAPSHOT-jar-with-dependencies.jar\cf2 \cb3 \outl0\strokewidth0 \strokec12 "\cf2 \cb3 \strokec6 ]\
+}
